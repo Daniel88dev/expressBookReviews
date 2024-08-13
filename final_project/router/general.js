@@ -3,6 +3,7 @@ let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+const axios = require("axios");
 
 //task 6
 public_users.post("/register", (req, res) => {
@@ -126,6 +127,55 @@ public_users.get("/review/:isbn", function (req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error retrieving reviews" }); // Handle unknown errors
+  }
+});
+
+//task 10-13 helper function
+// Function to fetch book list using Promise callbacks
+function getBookListWithPromise(url) {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(url)
+      .then((response) => resolve(response.data))
+      .catch((error) => reject(error));
+  });
+}
+//task 10-13 helper function
+// Function to fetch book list using async-await
+async function getBookListAsync(url) {
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    throw error; // Re-throw the error for handling in the route
+  }
+}
+
+//task 10 with Promise
+public_users.get("/promise", function (req, res) {
+  try {
+    getBookListWithPromise("http://localhost:5001/")
+      .then((bookList) => {
+        res.json(bookList);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving book list" });
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error" });
+  }
+});
+
+//task 10 with Async
+public_users.get("/async", async function (req, res) {
+  try {
+    const bookList = await getBookListAsync("http://localhost:5001/"); //
+    res.json(bookList);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving book list" });
   }
 });
 
