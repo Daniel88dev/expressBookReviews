@@ -67,10 +67,34 @@ public_users.get("/author/:author", function (req, res) {
   }
 });
 
+//task 4
 // Get all books based on title
 public_users.get("/title/:title", function (req, res) {
-  //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  try {
+    const requestTitle = req.params.title; // Retrieve title from request params
+    const filteredBooks = [];
+
+    // Get all book keys
+    const bookKeys = Object.keys(books);
+
+    // Loop through books and find matching title
+    for (const key of bookKeys) {
+      const book = books[key];
+      if (book.title.toLowerCase() === requestTitle.toLowerCase()) {
+        // lower-case comparison
+        filteredBooks.push(book);
+      }
+    }
+
+    if (filteredBooks.length > 0) {
+      res.json(filteredBooks); // Send matching books as a JSON response
+    } else {
+      res.status(404).json({ message: "No books found with that title" }); // Handle no book found
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving books" }); // Handle unknown errors
+  }
 });
 
 //  Get book review
