@@ -183,7 +183,7 @@ public_users.get("/async", async function (req, res) {
 public_users.get("/promise/isbn/:isbn", function (req, res) {
   try {
     const requestedIsbn = req.params.isbn;
-    getBookListWithPromise("http://localhost:5000/isbn/" + requestedIsbn)
+    getBookListWithPromise("http://localhost:5001/isbn/" + requestedIsbn)
       .then((book) => {
         res.json(book);
       })
@@ -201,7 +201,38 @@ public_users.get("/async/isbn/:isbn", async function (req, res) {
   try {
     const requestedIsbn = req.params.isbn;
     const book = await getBookListAsync(
-      "http://localhost:5000/isbn/" + requestedIsbn
+      "http://localhost:5001/isbn/" + requestedIsbn
+    );
+    res.json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving book details" });
+  }
+});
+
+//task 12 with Promise
+public_users.get("/promise/author/:author", function (req, res) {
+  try {
+    const requestedAuthor = req.params.author;
+    getBookListWithPromise("http://localhost:5001/author/" + requestedAuthor)
+      .then((book) => {
+        res.json(book);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving book details" });
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error" });
+  }
+});
+//task 12 with Async
+public_users.get("/async/author/:author", async function (req, res) {
+  try {
+    const requestedAuthor = req.params.author;
+    const book = await getBookListAsync(
+      "http://localhost:5001/author/" + requestedAuthor
     );
     res.json(book);
   } catch (error) {
