@@ -179,4 +179,35 @@ public_users.get("/async", async function (req, res) {
   }
 });
 
+//task 11 with Promise
+public_users.get("/promise/isbn/:isbn", function (req, res) {
+  try {
+    const requestedIsbn = req.params.isbn;
+    getBookListWithPromise("http://localhost:5000/isbn/" + requestedIsbn)
+      .then((book) => {
+        res.json(book);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ message: "Error retrieving book details" });
+      });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error" });
+  }
+});
+//task 11 with Async
+public_users.get("/async/isbn/:isbn", async function (req, res) {
+  try {
+    const requestedIsbn = req.params.isbn;
+    const book = await getBookListAsync(
+      "http://localhost:5000/isbn/" + requestedIsbn
+    );
+    res.json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving book details" });
+  }
+});
+
 module.exports.general = public_users;
