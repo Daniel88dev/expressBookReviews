@@ -21,10 +21,21 @@ public_users.get("/", function (req, res) {
   }
 });
 
+//task 2
 // Get book details based on ISBN
 public_users.get("/isbn/:isbn", function (req, res) {
-  //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  try {
+    const requestedIsbn = req.params.isbn; // Retrieve ISBN from request params
+    const book = books[requestedIsbn];
+    if (book) {
+      res.json(book); // Send the book details as a JSON response
+    } else {
+      res.status(404).json({ message: "Book not found" }); // Handle book not found
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error retrieving book details" }); // Handle unknown errors
+  }
 });
 
 // Get book details based on author
